@@ -15,6 +15,7 @@ public:
 	{
 		Ghost,
 		Cleaner,
+		Door,
 	};
 
 	void SetCamera(const std::shared_ptr<TPSCamera>& _spCamera)	//カメラをセット

@@ -1,4 +1,5 @@
-﻿
+﻿#include "KdEffekseerManager.h"
+
 void KdEffekseerManager::Create(int w, int h)
 {
 	// エフェクトのレンダラーの作成
@@ -318,6 +319,15 @@ void KdEffekseerObject::SetPos(const Math::Vector3& pos)
 	m_info.Pos = pos;
 
 	KdEffekseerManager::GetInstance().SetPos(m_handle, pos);
+}
+
+void KdEffekseerObject::SetRotation(const Math::Vector3& rotate,const Math::Vector3& axis, const float angle)
+{
+	//角度
+	m_info.Rotate = rotate;
+
+	//														軸　　　軸から何度
+	KdEffekseerManager::GetInstance().SetRotation(m_handle, axis, angle);
 }
 
 void KdEffekseerObject::SetScale(const Math::Vector3 scale)

@@ -31,9 +31,9 @@ void Ghost::Update()
 
 	//カメラのY回転行列を取得
 	Math::Matrix camRotYMat;
-	if (m_camera.expired() == false)
+	if (m_wpcamera.expired() == false)
 	{
-		camRotYMat = m_camera.lock()->GetRotationYMatrix();
+		camRotYMat = m_wpcamera.lock()->GetRotationYMatrix();
 	}
 
 	Math::Vector3 moveVec;	//移動方向を格納
@@ -61,17 +61,6 @@ void Ghost::Update()
 		moveFlg = true;
 	}
 
-	
-
-	//右クリックでTPSに切替
-	/*if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
-	{
-		m_isTPS = true;
-	}
-	else
-	{
-		m_isTPS = false;
-	}*/
 
 	Math::Matrix rotMat;
 	if (m_isTPS == true)
@@ -186,13 +175,20 @@ void Ghost::Update()
 	if (m_iswind)
 	{
 		m_iswind = false;
-		KdEffekseerManager::GetInstance().Play("wind.efkefc", m_pos+Math::Vector3{0,1,3}, {90.0f,0.0f,0}, 0.8f, 1.5f, false);
+		//m_wpwind = KdEffekseerManager::GetInstance().Play("wind.efkefc", m_pos + Math::Vector3{ 0,1,3 }, { 0.0f,0.0f,0 }, 0.8f, 0.7f, false);
 		
 	}
 
+	if (m_wpwind.expired() == false)
+	{
+		m_wpwind.lock()->SetPos(m_pos + Math::Vector3{ 0,1,3 });
+		m_wpwind.lock()->SetRotation(Math::Vector3{70.0f,0,0},Math::Vector3{ 1.0f,0.0f,0.0f }, 70.0f);
+	}
+
+
 	if (m_windframe > m_windTime)
 	{
-		m_iswind = true;
+		//m_iswind = true;
 		m_windframe = 0;
 	}
 	else
@@ -203,7 +199,8 @@ void Ghost::Update()
 	//printfと同じように使うことができる
 	//Application::Instance().m_log.AddLog("m_angle=%.2f ang=%.2f\n", m_angle, ang);
 
-	
+	//一時的に見やすくするためのポイントライト
+	KdShaderManager::Instance().WorkAmbientController().AddPointLight({ 10,10,10 }, 15, m_pos);
 
 }
 

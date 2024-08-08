@@ -8,6 +8,11 @@ void KdGameObject::DrawDebug()
 	m_pDebugWire->Draw();
 }
 
+void KdGameObject::SetMatrix(Math::Matrix _Mat)
+{
+	m_mWorld = _Mat;
+}
+
 void KdGameObject::SetScale(float scalar)
 {
 	Math::Vector3 scale(scalar);

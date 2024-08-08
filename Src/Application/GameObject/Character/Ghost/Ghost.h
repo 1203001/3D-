@@ -15,12 +15,14 @@ public:
 	void DrawLit()override;
 	void CSVLoader(std::string a_filePath);
 
+	const float GetAngle() const { return m_angle; }
+
 	void SetPos(Math::Vector3 _pos) { m_pos = _pos; }
 
 	//カメラをセット
 	void SetCamera(std::shared_ptr<TPSCamera> _camera)
 	{
-		m_camera = _camera;
+		m_wpcamera = _camera;
 	}
 
 	//掃除機をセット
@@ -46,12 +48,12 @@ private:
 
 	bool m_isTPS = false;
 
-	std::weak_ptr<TPSCamera> m_camera;
+	std::weak_ptr<TPSCamera> m_wpcamera;
 
 	const float m_speed = 0.05f;				//ベクトルのスピード
 
 	//エフェクシア
-	bool m_iswind = false;
+	bool m_iswind = true;
 	const int m_windTime = 60;
 	int m_windframe = 0;
 

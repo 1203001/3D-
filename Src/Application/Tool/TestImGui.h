@@ -17,9 +17,36 @@ public:
 		m_wpObjectController = _objectcontroller;
 	}
 
+	const Math::Matrix GetRotationXMatrix() const
+	{
+		return Math::Matrix::CreateRotationX(
+			DirectX::XMConvertToRadians(m_angle.x));
+	}
+
+	const Math::Matrix GetRotationYMatrix() const
+	{
+		return Math::Matrix::CreateRotationY(
+			DirectX::XMConvertToRadians(m_angle.y));
+	}
+
+	const Math::Matrix GetRotationZMatrix() const
+	{
+		return Math::Matrix::CreateRotationZ(
+			DirectX::XMConvertToRadians(m_angle.z));
+	}
+
+	const Math::Matrix GetScaleMatrix() const
+	{
+		return Math::Matrix::CreateScale(m_scale);
+	}
+
+
 private:
 
-	Math::Vector3 m_pos = {};
+	Math::Vector3 m_pos = {};				//座標
+	Math::Vector3 m_angle = {};				//角度
+	Math::Vector3 m_scale = {1.0f,1.0f,1.0f};				//大きさ
+
 	std::weak_ptr<ObjectController> m_wpObjectController;
 
 //=====================================================

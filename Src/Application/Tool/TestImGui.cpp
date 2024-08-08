@@ -4,6 +4,7 @@
 
 void TestImGui::Draw()
 {
+	ImGui::SetNextWindowPos(ImVec2(850, 20));
 	// デバッグウィンドウ
 	if (ImGui::Begin("Test Window"))
 	{
@@ -21,6 +22,10 @@ void TestImGui::Draw()
 			if (ImGui::Button((const char*)u8"掃除機"))
 			{
 				_objectcontroller->CreateObject(ObjectController::Object::Cleaner);
+			}
+			if (ImGui::Button((const char*)u8"ドア"))
+			{
+				_objectcontroller->CreateObject(ObjectController::Object::Door);
 			}
 
 			ImGui::EndPopup();
@@ -46,10 +51,18 @@ void TestImGui::Draw()
 
 
 	
-		ImGui::InputFloat("m_pos.x", &m_pos.x, 0.1f);
-		ImGui::InputFloat("m_pos.y", &m_pos.y, 0.1f);
-		ImGui::InputFloat("m_pos.z", &m_pos.z, 0.1f);
+		ImGui::InputFloat("m_pos.x", &m_pos.x, 1.0f);
+		ImGui::InputFloat("m_pos.y", &m_pos.y, 1.0f);
+		ImGui::InputFloat("m_pos.z", &m_pos.z, 1.0f);
 
+
+		ImGui::InputFloat("RotateX", &m_angle.x, 1.0f);
+		ImGui::InputFloat("RotateY", &m_angle.y, 1.0f);
+		ImGui::InputFloat("RotateZ", &m_angle.z, 1.0f);
+
+		ImGui::InputFloat("ScaleX", &m_scale.x, 0.1f);
+		ImGui::InputFloat("ScaleY", &m_scale.y, 0.1f);
+		ImGui::InputFloat("ScaleZ", &m_scale.z, 0.1f);
 
 	}
 	ImGui::End();
