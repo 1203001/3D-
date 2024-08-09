@@ -45,7 +45,6 @@ private:
 
 	float m_angle = 180;
 
-//	std::weak_ptr<Gomi> m_wpgomi;	//ゴミクラスを保存
 
 
 };

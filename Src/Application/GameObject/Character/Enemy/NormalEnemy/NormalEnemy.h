@@ -16,6 +16,8 @@ public:
 
 private:
 
+
+
 	bool m_isattack = false;
 	int m_attackframe = 0;
 

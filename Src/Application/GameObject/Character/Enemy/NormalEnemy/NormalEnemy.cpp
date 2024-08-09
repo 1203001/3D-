@@ -1,5 +1,8 @@
 ﻿#include "NormalEnemy.h"
 #include"NormalEnemyAttack/NormalEnemyAttack.h"
+
+#include"../../Cleaner/Cleaner.h"
+
 #include"../../../../Scene/SceneManager.h"
 
 void NormalEnemy::Init()
@@ -18,22 +21,33 @@ void NormalEnemy::Init()
 
 void NormalEnemy::Update()
 {
-	//if (m_wpTarget.expired() == false)
-	//{
-	//	if (m_isattack)
-	//	{
-	//		m_isattack = false;
+	if (m_wpTarget.expired() == false)
+	{
+		if (m_isattack)
+		{
+			m_isattack = false;
 
-	//		Math::Vector3 _playerpos = m_wpTarget.lock()->GetPos();
+			Math::Vector3 _playerpos = m_wpTarget.lock()->GetPos();
+			std::shared_ptr<Cleaner> _cleaner = m_wpcleaner.lock();
 
-	//		//敵①の攻撃
-	//		std::shared_ptr<NormalEnemyAttack> _normalenemyattack;
-	//		_normalenemyattack = std::make_shared<NormalEnemyAttack>();
-	//		_normalenemyattack->Init();
-	//		_normalenemyattack->SetPram(_playerpos, m_pos);
-	//		SceneManager::Instance().AddObject(_normalenemyattack);
-	//	}
-	//}
+			//敵①の攻撃
+			std::shared_ptr<NormalEnemyAttack> _normalenemyattack;
+			_normalenemyattack = std::make_shared<NormalEnemyAttack>();
+			_normalenemyattack->Init();
+			_normalenemyattack->SetPram(_playerpos, m_pos);
+
+			if (_cleaner)
+			{
+				//敵①攻撃クラスに掃除機クラスをセット
+				_normalenemyattack->SetCleaner(_cleaner);
+			}
+
+
+			SceneManager::Instance().AddObject(_normalenemyattack);
+
+			
+		}
+	}
 
 	//一定時間たつと攻撃
 	if (m_attackframe > m_attackstart)

@@ -103,6 +103,8 @@ void GameScene::Init()
 	_cleaner->Init();
 	m_objList.push_back(_cleaner);
 
+	
+
 	//ゴミ
 	std::shared_ptr<Gomi> _gomi;
 	_gomi = std::make_shared<Gomi>();
@@ -136,6 +138,9 @@ void GameScene::Init()
 
 	//敵①クラスにおばけ(プレイヤー)をセットする
 	_normalenemy->SetTarget(_ghost);
+
+	//敵①クラスに掃除機クラスをセットする
+	_normalenemy->SetCleaner(_cleaner);
 
 	//ゴミクラスに掃除機クラスをセットする
 	_gomi->SetCleaner(_cleaner);
