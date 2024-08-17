@@ -321,10 +321,8 @@ void KdEffekseerObject::SetPos(const Math::Vector3& pos)
 	KdEffekseerManager::GetInstance().SetPos(m_handle, pos);
 }
 
-void KdEffekseerObject::SetRotation(const Math::Vector3& rotate,const Math::Vector3& axis, const float angle)
+void KdEffekseerObject::SetRotation(const Math::Vector3& axis, const float angle)
 {
-	//角度
-	m_info.Rotate = rotate;
 
 	//														軸　　　軸から何度
 	KdEffekseerManager::GetInstance().SetRotation(m_handle, axis, angle);

@@ -16,8 +16,8 @@ void Ghost::Init()
 	m_spAnimator = std::make_shared<KdAnimator>();
 	m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("GhostArmature|ghost_idle"),true);
 
-	m_pCollider = std::make_unique<KdCollider>();
-	m_pCollider->RegisterCollisionShape("Ghost", m_spModel, KdCollider::TypeGround);
+	//m_pCollider = std::make_unique<KdCollider>();
+	//m_pCollider->RegisterCollisionShape("Ghost", m_spModel, KdCollider::TypeGround);
 
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 
@@ -171,31 +171,6 @@ void Ghost::Update()
 	//SRT
 	m_mWorld = _scaleMat * rotMat * transMat;
 
-	//風エフェクト
-	if (m_iswind)
-	{
-		m_iswind = false;
-		//m_wpwind = KdEffekseerManager::GetInstance().Play("wind.efkefc", m_pos + Math::Vector3{ 0,1,3 }, { 0.0f,0.0f,0 }, 0.8f, 0.7f, false);
-		
-	}
-
-	if (m_wpwind.expired() == false)
-	{
-		m_wpwind.lock()->SetPos(m_pos + Math::Vector3{ 0,1,3 });
-		m_wpwind.lock()->SetRotation(Math::Vector3{70.0f,0,0},Math::Vector3{ 1.0f,0.0f,0.0f }, 70.0f);
-	}
-
-
-	if (m_windframe > m_windTime)
-	{
-		//m_iswind = true;
-		m_windframe = 0;
-	}
-	else
-	{
-		m_windframe++;
-	}
-
 	//printfと同じように使うことができる
 	//Application::Instance().m_log.AddLog("m_angle=%.2f ang=%.2f\n", m_angle, ang);
 
@@ -251,38 +226,6 @@ void Ghost::DrawLit()
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld, _color);
 }
 
-void Ghost::CSVLoader(std::string a_filePath)
-{
-	//std::ifstream ifs(a_filePath);//ファイルを操作する変数
-	//if (!ifs.is_open())//ファイルが開けるかどうか
-	//{
-	//	return;
-	//}
 
-	//std::string lineString;//ファイルから読み取った1文字列
-	//int h = 0;//縦カウンタ
-	//int w = 0;//横カウンタ
-
-	////①ファイルから１文字列ずつ読み取る
-	//while (std::getline(ifs, lineString))
-	//{
-	//	std::istringstream iss(lineString);//文字列を操作する変数
-	//	std::string commaString;		   //コンマ区切りにした文字列
-	//	std::vector<int>tempList;		   //二次元可変長配列に格納する一次元可変長配列
-
-	//	//②文字列をコンマ区切りにする
-	//	while (std::getline(iss, commaString, ','))
-	//	{
-	//		//③文字列を数値に変換する
-	//		float tempData = stof(commaString);
-	//		tempList.push_back(tempData);
-	//	}
-	//	//二次元可変長配列に１次元可変長配列を格納する
-	//	m_data.push_back(tempList);
-
-	//}
-
-	//ifs.close();
-}
 
 

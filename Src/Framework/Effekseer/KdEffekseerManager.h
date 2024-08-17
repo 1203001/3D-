@@ -122,7 +122,7 @@ public:
 	void SetPos(const Math::Vector3& pos);
 
 	//角度設定
-	void SetRotation(const Math::Vector3& rotate, const Math::Vector3& axis, const float angle = 0.0f);
+	void SetRotation(const Math::Vector3& axis, const float angle = 0.0f);
 
 	// サイズ設定
 	void SetScale(const Math::Vector3 scale = { 1.0f, 1.0f, 1.0f });

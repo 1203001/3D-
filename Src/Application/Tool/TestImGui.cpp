@@ -14,7 +14,7 @@ void TestImGui::Draw()
 
 		if (ImGui::BeginPopup("Object"))
 		{
-			if (ImGui::Button((const char*)u8"おばけ"))
+			/*if (ImGui::Button((const char*)u8"おばけ"))
 			{
 				_objectcontroller->CreateObject(ObjectController::Object::Ghost);
 			}
@@ -26,6 +26,10 @@ void TestImGui::Draw()
 			if (ImGui::Button((const char*)u8"ドア"))
 			{
 				_objectcontroller->CreateObject(ObjectController::Object::Door);
+			}*/
+			if (ImGui::Button((const char*)u8"壁"))
+			{
+				_objectcontroller->CreateObject(ObjectController::Object::WallObject);
 			}
 
 			ImGui::EndPopup();
@@ -39,6 +43,12 @@ void TestImGui::Draw()
 		if (ImGui::Button((const char*)u8"座標確定"))
 		{
 			_objectcontroller->Confirm();
+		}
+
+		ImGui::SameLine();
+		if (ImGui::Button((const char*)u8"セーブ"))
+		{
+			_objectcontroller->Save();
 		}
 
 		ImGui::SameLine();

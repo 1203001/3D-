@@ -13,7 +13,6 @@ public:
 	void Update()override;
 	void PostUpdate()override;
 	void DrawLit()override;
-	void CSVLoader(std::string a_filePath);
 
 	const float GetAngle() const { return m_angle; }
 
@@ -52,12 +51,7 @@ private:
 
 	const float m_speed = 0.05f;				//ベクトルのスピード
 
-	//エフェクシア
-	bool m_iswind = true;
-	const int m_windTime = 60;
-	int m_windframe = 0;
 
-	std::weak_ptr<KdEffekseerObject> m_wpwind;
 
 };
 

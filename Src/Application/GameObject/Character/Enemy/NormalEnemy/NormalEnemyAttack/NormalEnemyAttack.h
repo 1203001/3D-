@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class Cleaner;
+class Score;
 
 class NormalEnemyAttack :public KdGameObject
 {
@@ -23,6 +24,11 @@ public:
 		m_wpcleaner = _cleaner;
 	}
 
+	void SetScore(std::shared_ptr<Score> _score)
+	{
+		m_wpscore = _score;
+	}
+
 	
 
 private:
@@ -31,17 +37,15 @@ private:
 	Math::Vector3 m_pos = {};
 
 	Math::Vector3 m_playerpos = {};				//プレイヤー座標
-	//Math::Vector3 m_enemypos = {};				//敵座標
 
 	std::weak_ptr<Cleaner> m_wpcleaner;		//掃除機クラス
+	std::weak_ptr<Score> m_wpscore;			//スコアクラス
 
 	const float m_speed = 0.1f;				//攻撃スピード
 
-	//const float m_speed = 0.05f;			//ベクトルのスピード
-
 	float m_attackangle = 0;				//プレイヤーと敵①攻撃の角度
-	const float m_range = 10.0f;			//吸い込み距離
-	float m_endrange = 3.0f;				//この距離以内になると吸い込み完了
+	const float m_range = 12.0f;			//吸い込み距離
+	float m_endrange = 4.0f;				//この距離以内になると吸い込み完了
 
 
 };

@@ -101,6 +101,7 @@ void Application::KdPostDraw()
 
 	TestImGui::Instance().Draw();
 
+
 	// BackBuffer -> 画面表示
 	KdDirect3D::Instance().WorkSwapChain()->Present(0, 0);
 }

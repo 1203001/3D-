@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 class Cleaner;
+class Score;
 
 
 class EnemyBase :public KdGameObject
@@ -22,7 +23,10 @@ public:
 		m_wpcleaner = _cleaner;
 	}
 
-	
+	void SetScore(std::shared_ptr<Score> _score)
+	{
+		m_wpscore = _score;
+	}
 
 protected:
 
@@ -32,6 +36,7 @@ protected:
 
 	std::weak_ptr<KdGameObject>	m_wpTarget;
 	std::weak_ptr<Cleaner> m_wpcleaner;		//掃除機クラス
+	std::weak_ptr<Score> m_wpscore;			//スコアクラス
 
 
 };

@@ -1,6 +1,7 @@
 ﻿#include "Cleaner.h"
 #include"../../Camera/TPSCamera/TPSCamera.h"
 #include"../../House/Gomi/Gomi.h"
+#include"../../../Scene/SceneManager.h"
 
 void Cleaner::Init()
 {
@@ -17,7 +18,8 @@ void Cleaner::Init()
 	m_pCollider = std::make_unique<KdCollider>();
 	m_pCollider->RegisterCollisionShape("Cleaner", m_spModel, KdCollider::TypeGround);
 
-
+	//デバッグ用
+	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
 }
 
 void Cleaner::Update()
@@ -60,9 +62,10 @@ void Cleaner::Update()
 		}
 	}
 
-
+	
 
 	m_pos = GetPos();
+	m_movevec = {};
 
 	//カメラのY回転行列を取得
 	Math::Matrix camRotYMat;
@@ -71,35 +74,29 @@ void Cleaner::Update()
 		camRotYMat = m_wpcamera.lock()->GetRotationYMatrix();
 	}
 
-	Math::Vector3 moveVec;	//移動方向を格納
 	bool moveFlg = false;	//移動している状態かどうか
 
 	if (GetAsyncKeyState('W') & 0x8000)
 	{
-		moveVec += Math::Vector3::TransformNormal({ 0,0,1 }, camRotYMat);
+		m_movevec += Math::Vector3::TransformNormal({ 0,0,1 }, camRotYMat);
 		moveFlg = true;
 
 	}
 	if (GetAsyncKeyState('A') & 0x8000)
 	{
-		moveVec += Math::Vector3::TransformNormal({ -1,0,0 }, camRotYMat);
+		m_movevec += Math::Vector3::TransformNormal({ -1,0,0 }, camRotYMat);
 		moveFlg = true;
 	}
 	if (GetAsyncKeyState('S') & 0x8000)
 	{
-		moveVec += Math::Vector3::TransformNormal({ 0,0,-1 }, camRotYMat);
+		m_movevec += Math::Vector3::TransformNormal({ 0,0,-1 }, camRotYMat);
 		moveFlg = true;
 	}
 	if (GetAsyncKeyState('D') & 0x8000)
 	{
-		moveVec += Math::Vector3::TransformNormal({ 1,0,0 }, camRotYMat);
+		m_movevec += Math::Vector3::TransformNormal({ 1,0,0 }, camRotYMat);
 		moveFlg = true;
 	}
-
-
-	Math::Matrix _rotMat;
-
-
 
 	//TPV
 	//移動（回転処理）
@@ -107,17 +104,17 @@ void Cleaner::Update()
 	{
 
 		//正規化（長さを１にする）
-		moveVec.Normalize();
+		m_movevec.Normalize();
 
 		//今キャラが向いている方向
-		//①キャラの回転行列を作成																	↓座標補正
-		Math::Matrix nowRotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle + 180));
+		//①キャラの回転行列を作成														
+		Math::Matrix nowRotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle));
 		//②現在の方向を求める
 		Math::Vector3 nowVec = Math::Vector3::TransformNormal(Math::Vector3(0, 0, 1), nowRotMat);
 		nowVec.Normalize();
 
 		//向きたい方向
-		Math::Vector3 toVec = moveVec;
+		Math::Vector3 toVec = m_movevec;
 		toVec.Normalize();
 
 		//内積を使って回転する角度を求める
@@ -168,18 +165,91 @@ void Cleaner::Update()
 
 
 	//回転行列																		↓座標補正
-	_rotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle));
+	//Math::Matrix _rotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle));
 
-	m_pos += moveVec * 0.1f;
+	//m_pos += m_movevec * 0.1f;
+
+	//Math::Matrix _scaleMat = Math::Matrix::CreateScale(3.0f);
+	//Math::Matrix _transMat = Math::Matrix::CreateTranslation(m_pos);
+	//m_mWorld = _scaleMat * _rotMat * _transMat;
+
+
+	if (m_isinhale)
+	{
+
+		Math::Vector3 _effectpos = m_pos;
+		_effectpos.y += 2;
+
+
+		if (m_effectframe <= 0)
+		{
+
+			//吸い込みエフェクトを次いつ出すか
+			m_effectframe = m_EffectTime;
+
+
+			//吸い込みエフェクト
+			m_wpinhale = KdEffekseerManager::GetInstance().Play("smoke.efkefc", _effectpos, { 0.0f,0.0f,0.0f }, 1.0f, 1.0f, false);
+
+
+		}
+
+		m_effectframe--;
+
+		if (m_wpinhale.expired() == false)
+		{
+			m_wpinhale.lock()->SetPos(_effectpos);
+			m_wpinhale.lock()->SetRotation({ 0.0f,1.0f,0.0f }, DirectX::XMConvertToRadians(m_angle));
+
+		}
+
+
+	}
+	else
+	{
+		KdEffekseerManager::GetInstance().StopAllEffect();
+		m_effectframe = 0;
+	}
+
+	//プレイヤーの座標更新
+	m_pos += m_movevec * 0.1f;
+	m_pos.y += m_gravity;
+
+	Sphere();
+
+	
+}
+
+void Cleaner::PostUpdate()
+{
+
+	Math::Matrix _movefloorMat = Math::Matrix::CreateTranslation(m_beforfloorPos);
+
+	//動く床に当たっていた時の処理
+	if (m_ishitmovefloor)
+	{
+		//動く床の動く前の逆行列
+		Math::Matrix _inverseMatrix = DirectX::XMMatrixInverse(nullptr, _movefloorMat);
+
+		//動く床から見たプレイヤーの座標行列
+		Math::Matrix _playerMat = Math::Matrix::CreateTranslation(m_pos) * _inverseMatrix;
+
+		//動く床の動いた後の行列
+		Math::Matrix _afterMoveGroundMat = Math::Matrix::CreateTranslation(m_wpgameobject.lock()->GetMatrix().Translation());
+
+		//座標を確定
+		m_pos = _afterMoveGroundMat.Translation() + _playerMat.Translation();
+	}
+
+
+	Math::Matrix _rotMat = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_angle));
+
+	
 
 	Math::Matrix _scaleMat = Math::Matrix::CreateScale(3.0f);
 	Math::Matrix _transMat = Math::Matrix::CreateTranslation(m_pos);
 	m_mWorld = _scaleMat * _rotMat * _transMat;
 
-}
-
-void Cleaner::PostUpdate()
-{
 	//アニメーションの更新
 	if (!m_spAnimator->IsAnimationEnd())
 	{
@@ -192,5 +262,89 @@ void Cleaner::PostUpdate()
 void Cleaner::DrawLit()
 {
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+}
+
+void Cleaner::Sphere()
+{
+	//==============================================================
+	//球判定
+	//==============================================================
+
+	//球判定用の変数を作成
+	KdCollider::SphereInfo sphere;
+	//球の中心点を設定
+	sphere.m_sphere.Center = m_pos + Math::Vector3(0, 0.3f, 0);
+	
+	//球の半径を設定
+	sphere.m_sphere.Radius = 0.5f;
+	//当たり判定をしたいタイプを設定
+	sphere.m_type = KdCollider::TypeGround;
+
+	//デバック用
+	m_pDebugWire->AddDebugSphere(sphere.m_sphere.Center, sphere.m_sphere.Radius);
+
+	//球に当たったオブジェクトの情報を格納
+	std::list<KdCollider::CollisionResult> retSphereList;
+	std::vector<std::weak_ptr<KdGameObject>> _gameobject;
+
+	//当たり判定！！！！！！！！！！！！！！！！！！！
+	for (auto& obj : SceneManager::Instance().GetObjList())
+	{
+
+
+		if (obj->GetObjectType() == KdGameObject::Movefloor || obj->GetObjectType() == KdGameObject::House)
+		{
+			//当たり判定
+			if (obj->Intersects(sphere, &retSphereList))
+			{
+				_gameobject.push_back(obj);
+
+			}
+		}
+	}
+
+	//球に当たったリストから一番近いオブジェクトを検出
+	float maxOverLap = 0;			//はみ出た球の長さ
+	Math::Vector3 hitDir;	//当たった方向
+	bool isHit = false;			//当たっていたらtrue
+	int _cnt = 0;
+
+	for (auto& ret : retSphereList)
+	{
+		//球にめりこんで、オーバーした長さが一番長いものを探す
+		if (maxOverLap < ret.m_overlapDistance)
+		{
+			maxOverLap = ret.m_overlapDistance;
+			hitDir = ret.m_hitDir;
+			isHit = true;
+			m_wpgameobject = _gameobject[_cnt];
+		}
+
+		_cnt++;
+
+	}
+
+	if (isHit)
+	{
+		//zへの押し返し無効
+		hitDir.z = 0;
+		//正規化(長さを1にする)
+		//方向は絶対長さ１
+		hitDir.Normalize();
+
+		//動く前の座標
+		m_beforfloorPos = m_wpgameobject.lock()->GetPos();
+
+		//動く床に当たっているときtrueにする
+		m_ishitmovefloor = true;
+
+		//地面に当たっている
+		m_pos += hitDir * maxOverLap;
+	}
+	else
+	{
+		m_ishitmovefloor = false;
+	}
+
 }
 

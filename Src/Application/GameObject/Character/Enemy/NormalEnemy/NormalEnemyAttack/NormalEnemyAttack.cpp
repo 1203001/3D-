@@ -1,5 +1,6 @@
 ﻿#include "NormalEnemyAttack.h"
 #include"../../../Cleaner/Cleaner.h"
+#include"../../../../UI/Score/Score.h"
 #include"../../../../../main.h"
 
 void NormalEnemyAttack::Init()
@@ -32,10 +33,17 @@ void NormalEnemyAttack::Update()
 		Math::Vector3 _Vec = _cleanerPos - m_pos;
 
 		//掃除機が吸い込む体制かつ掃除機がゴミの方向を向いているかつ一定以内にいるとき
-		if (_cleaner->GetInHale() && m_attackangle < 90.0f && _Vec.Length() < m_range)
+		if (_cleaner->GetInHale() && m_attackangle < 25.0f && _Vec.Length() < m_range)
 		{
 			if (_Vec.Length() < m_endrange)
 			{
+
+				std::shared_ptr<Score> _score = m_wpscore.lock();
+				if (_score)
+				{
+					_score->SetScore(1);
+				}
+
 				m_isExpired = true;
 
 			}
@@ -96,7 +104,7 @@ void NormalEnemyAttack::InHale()
 		Math::Vector3 _playerPos = _cleaner->GetPos();
 
 		//プレイヤーの前方ベクトル
-		Math::Vector3 _playervec = _cleaner->GetMatrix().Forward();
+		Math::Vector3 _playervec = _cleaner->GetMatrix().Backward();
 		_playervec.Normalize();
 
 		//敵①攻撃座標

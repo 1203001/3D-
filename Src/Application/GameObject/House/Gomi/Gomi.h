@@ -14,6 +14,7 @@ public:
 	void DrawLit()override;
 	void InHale();
 
+	void Sphere();
 
 	const Math::Vector3 GetPos() { return m_pos; }
 
@@ -32,14 +33,28 @@ private:
 
 	std::weak_ptr<Cleaner> m_wpcleaner;		//掃除機クラス
 
+	enum SituationType
+	{
+		TypeGround		= 1 << 0, 						//地面にいるとき
+		TypeAir			= 1 << 1,						//空中にいるとき
+		TypeSuikomi		= 1 << 2,						//掃除機に吸い込まれているとき
+		TypeNotSuikomi	= 1<< 3							//掃除機に吸い込まれていたけど吸い込まれなくなった時
+	};
 
-	const float m_speed = 0.05f;	//ベクトルのスピード
+	UINT m_SituationType = TypeGround;
+
+	const float m_speed = 0.05f;		//ベクトルのスピード
 
 	float m_gomiangle = 0;				//プレイヤーとゴミの角度
 
-	const float m_range = 10.0f;			//吸い込み距離
-	float m_endrange = 3.0f;				//この距離以内になると吸い込み完了
+	const float m_range = 12.0f;		//吸い込み距離
+	float m_endrange = 4.0f;			//この距離以内になると吸い込み完了
 
+	float m_gravity = 0.1f;				//重力
+	const float m_gravityPow = 0.01;	//重力をどれくらい動かすか
+	const float m_endgravity = 0.05f;	//この値までいくと重力を止める
+
+	float m_hitPosY = 0;				//スフィアで当たったY座標を保存
 
 };
 

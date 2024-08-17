@@ -17,9 +17,14 @@
 #include"../../GameObject/House/FloorLamp/FloorLamp.h"
 #include"../../GameObject/House/Gomi/Gomi.h"
 #include"../../GameObject/House/Door/Door.h"
+#include"../../GameObject/House/MoveFloor/MoveFloor.h"
+#include"../../GameObject/House/Wall/Wall.h"
+
+#include"../../GameObject/UI/Score/Score.h"
 
 #include"../../Tool/ObjectController/ObjectController.h"
 #include"../../Tool/TestImGui.h"
+#include"../../Tool/CSV/HouseCSV/HouseCSV.h"
 
 void GameScene::Event()
 {
@@ -63,6 +68,12 @@ void GameScene::Init()
 	//デバックウィンドウにオブジェクトコントローラーを渡す
 	TestImGui::Instance().SetObjectController(_objectcontroller);
 
+	//家のCSV
+	//std::shared_ptr<HouseCSV> _housecsv;
+	//_housecsv = std::make_shared<HouseCSV>();
+	//_housecsv->Init();
+	//m_objList.push_back(_housecsv);
+
 	//スカイボックス
 	//std::shared_ptr<BackGround> _background = std::make_shared<BackGround>();
 	//m_objList.push_back(_background);
@@ -73,7 +84,7 @@ void GameScene::Init()
 	ground->Init();
 	m_objList.push_back(ground);*/
 
-	//動く床
+	//家
 	std::shared_ptr<House> _house;
 	_house = std::make_shared<House>();
 	_house->Init();
@@ -103,8 +114,6 @@ void GameScene::Init()
 	_cleaner->Init();
 	m_objList.push_back(_cleaner);
 
-	
-
 	//ゴミ
 	std::shared_ptr<Gomi> _gomi;
 	_gomi = std::make_shared<Gomi>();
@@ -116,6 +125,24 @@ void GameScene::Init()
 	_door = std::make_shared<Door>();
 	_door->Init();
 	m_objList.push_back(_door);
+
+	//動く床
+	std::shared_ptr<MoveFloor> _movefloor;
+	_movefloor = std::make_shared<MoveFloor>();
+	_movefloor->Init();
+	m_objList.push_back(_movefloor);
+
+	//壁
+	/*std::shared_ptr<Wall> _wall;
+	_wall = std::make_shared<Wall>();
+	_wall->Init();
+	m_objList.push_back(_wall);*/
+
+	//スコア(清潔度)
+	std::shared_ptr<Score> _score;
+	_score = std::make_shared<Score>();
+	_score->Init();
+	m_objList.push_back(_score);
 
 	//カメラ追加
 	std::shared_ptr<TPSCamera> _camera;
@@ -133,6 +160,7 @@ void GameScene::Init()
 	//掃除機クラスにカメラをセット
 	_cleaner->SetCamera(_camera);
 
+
 	//おばけにクリーナーをセットする
 	_ghost->SetCleaner(_cleaner);
 
@@ -141,6 +169,9 @@ void GameScene::Init()
 
 	//敵①クラスに掃除機クラスをセットする
 	_normalenemy->SetCleaner(_cleaner);
+
+	//敵①クラスにスコアクラスをセットする
+	_normalenemy->SetScore(_score);
 
 	//ゴミクラスに掃除機クラスをセットする
 	_gomi->SetCleaner(_cleaner);

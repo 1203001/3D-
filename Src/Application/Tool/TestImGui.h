@@ -12,6 +12,9 @@ public:
 	const Math::Vector3 GetPos()const { return m_pos; }
 	void SetPos(Math::Vector3 _pos) { m_pos = _pos; }
 
+	const Math::Vector3 GetAngle()const { return m_angle; }
+	const Math::Vector3 GetScale()const { return m_scale; }
+
 	void SetObjectController(std::shared_ptr<ObjectController> _objectcontroller)
 	{
 		m_wpObjectController = _objectcontroller;

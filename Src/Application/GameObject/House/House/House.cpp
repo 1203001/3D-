@@ -2,6 +2,7 @@
 
 void House::Init()
 {
+	m_objectType = KdGameObject::House;
 	m_spModel = std::make_shared<KdModelData>();
 	m_spModel->Load("Asset/Models/House/House/house.gltf");
 
@@ -17,16 +18,7 @@ void House::Init()
 void House::Update()
 {
 
-	////一定数動いたら反対側に動かす
-	//if (m_move > 5.0f)
-	//{
-	//	m_move = 0.0f;
-	//	m_speed *= -1;
-	//}
-
-	//m_move += 0.1f;
-
-	//m_pos.x += m_speed;
+	
 
 	
 
@@ -35,4 +27,8 @@ void House::Update()
 void House::DrawLit()
 {
 	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+
+
+	KdDirect3D::Instance().CreateBlendState
+
 }
